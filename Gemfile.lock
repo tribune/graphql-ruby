@@ -65,6 +65,7 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    ruby-prof (0.15.8)
     ruby-progressbar (1.7.5)
     shellany (0.0.1)
     simplecov (0.10.0)
@@ -91,3 +92,7 @@ DEPENDENCIES
   minitest-reporters (~> 1.0)
   pry (~> 0.10)
   rake (~> 10.4)
+  ruby-prof
+
+BUNDLED WITH
+   1.10.6
