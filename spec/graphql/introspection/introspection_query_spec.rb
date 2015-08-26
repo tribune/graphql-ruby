@@ -5,22 +5,28 @@ describe "GraphQL::Introspection::INTROSPECTION_QUERY" do
   let(:result) { GraphQL::Query.new(DummySchema, query_string, validate: false).result }
 
   it 'runs' do
+    profiles = {
+      "wall-time" => RubyProf::WALL_TIME,
+      "process-time" => RubyProf::PROCESS_TIME,
+      "cpu-time" => RubyProf::CPU_TIME,
+      "allocations" => RubyProf::ALLOCATIONS,
+      "memory" => RubyProf::MEMORY,
+      "gc-time" => RubyProf::GC_TIME,
+      "gc-runs" => RubyProf::GC_RUNS,
+    }
 
-    # RubyProf.measure_mode = RubyProf::WALL_TIME
-    # RubyProf.measure_mode = RubyProf::PROCESS_TIME
-    # RubyProf.measure_mode = RubyProf::CPU_TIME
-    # RubyProf.measure_mode = RubyProf::ALLOCATIONS
-    # RubyProf.measure_mode = RubyProf::MEMORY
-    # RubyProf.measure_mode = RubyProf::GC_TIME
-    # RubyProf.measure_mode = RubyProf::GC_RUNS
+    profiles.each do |name, mode|
+      RubyProf.measure_mode = mode
 
-    profile = RubyProf.profile do
-      result
-    end
+      profile = RubyProf.profile do
+        query = GraphQL::Query.new(DummySchema, query_string, validate: false)
+        query.result
+      end
 
-    printer = RubyProf::FlatPrinter.new(profile)
-    File.open("profile", "wb") do  |f|
-      printer.print(f)
+      printer = RubyProf::FlatPrinter.new(profile)
+      File.open("profile-#{name}", "wb") do  |f|
+        printer.print(f)
+      end
     end
 
     assert(result["data"])
