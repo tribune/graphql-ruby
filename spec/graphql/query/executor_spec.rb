@@ -109,9 +109,7 @@ describe GraphQL::Query::Executor do
       }}
       assert_equal(expected, result)
     end
-
   end
-
 
   describe 'runtime errors' do
     let(:query_string) {%| query noMilk { error }|}

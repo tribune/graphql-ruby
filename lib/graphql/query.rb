@@ -57,6 +57,11 @@ class GraphQL::Query
   def result
     if @validate && validation_errors.any?
       return { "errors" => validation_errors }
+    else
+      # TODO: make this not mutate stuff
+      # - Can't run it _before_ static validation because it leaves orphaned fragment defs
+      # - Can't run it _after_ static validation because it's not idempotent
+      GraphQL::Query::Preprocessor.new(self, @document).process
     end
 
     @result ||= Executor.new(self).result
@@ -109,6 +114,7 @@ require 'graphql/query/context'
 require 'graphql/query/directive_chain'
 require 'graphql/query/executor'
 require 'graphql/query/literal_input'
+require 'graphql/query/preprocessor'
 require 'graphql/query/serial_execution'
 require 'graphql/query/type_resolver'
 require 'graphql/query/variables'
